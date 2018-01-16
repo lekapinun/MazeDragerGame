@@ -91,19 +91,41 @@ while 1:
 
     # Create Map
     while option == 5:
+        # ret, img = cap.read()
+        # # img = cv2.flip(img,1)
+        # img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        # img = cv2.inRange(img,0,125)
+        # img = 255-img
+        # img = cv2.medianBlur(img,5)
+        # img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
+        # cv2.imshow("image",img)
         ret, img = cap.read()
-        img = cv2.flip(img,1)
+        # img = cv2.flip(img,1)
         img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-        img = cv2.inRange(img,0,100)
-        img = 255-img
+        img = cv2.inRange(img,0,75)
+        # img = 255-img
         img = cv2.medianBlur(img,5)
-        img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
-        cv2.imshow("image",img)
-
+        TampmapGame = img.copy()
+        # TampmapGame=255-TampmapGame
+        # img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
+        newtest=np.zeros(TampmapGame.shape)    
+        contourmask = temp,contours,hierarchy = cv2.findContours(TampmapGame, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+        for cnt in contours:
+            x,y,w,h = cv2.boundingRect(cnt)
+            if(x==0 or y==0 or x+w==TampmapGame.shape[0] or y+h==TampmapGame.shape[1] or x==TampmapGame.shape[0] or y==TampmapGame.shape[1]):
+                print("1")# cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
+            else:
+                # cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+                if(w*h>1000):
+                    newtest[y:y+h,x:x+w]=TampmapGame[y:y+h,x:w+x]
+            
+        cv2.drawContours(img,contours,-1,(0,0,255),2)
+        newtest=255-newtest
+        cv2.imshow('image',newtest)
         k = cv2.waitKey(1)
         if k & 0xFF == ord('d'):
             option = 4
-            mapGame = img.copy()
+            mapGame = newtest.copy()
         elif  k & 0xFF == ord('q'):
             option = 0
 
